@@ -34,9 +34,11 @@ string Calculator::getNextElement(unsigned int& pointer)
 }
 
 // priority of operation1 < operation2?
-bool Calculator::lessPriority(string op1, string op2)
+bool Calculator::higherPriority(string op1, string op2)
 {
-	return operations[op1][0] < operations[op2][0];
+	if (op1 == "(")
+		return true;
+	return operations[op1][0] > operations[op2][0];
 }
 
 bool Calculator::isNumber(string elem)
@@ -51,7 +53,6 @@ bool Calculator::isNumber(string elem)
 
 int Calculator::handleRawString(const string &userRawInput)
 {
-	
 	rawString = userRawInput;
 	unsigned int i = 0;
 	string elem = getNextElement(i);
@@ -60,12 +61,15 @@ int Calculator::handleRawString(const string &userRawInput)
 		//if elem is operation
 		if (operations.find(elem) != operations.end())
 		{
-			while (!operationsStack.empty() && lessPriority(elem, operationsStack.top()))
+			while (!operationsStack.empty() && !higherPriority(elem, operationsStack.top()))
 			{
-				output.push(operationsStack.top());
+				auto* stackTop = &operationsStack.top();
+				if (*stackTop != "(")
+					output.push(*stackTop);
 				operationsStack.pop();
 			}
-			operationsStack.push(elem);
+			if (elem != ")")
+				operationsStack.push(elem);
 		}
 		else if(isNumber(elem))
 		{
@@ -100,19 +104,19 @@ int Calculator::applyOperation(vector<double>& solution, const string& operation
 	double tmp = 0;
 	if (operation == "*")
 	{
-		tmp = *(solution.end() - 1) * *(solution.end() - 2);
+		tmp = *(solution.end() - 2) * *(solution.end() - 1);
 	}
 	else if (operation == "/")
 	{
-		tmp = *(solution.end() - 1) / *(solution.end() - 2);
+		tmp = *(solution.end() - 2) / *(solution.end() - 1);
 	}
 	else if (operation == "+")
 	{
-		tmp = *(solution.end() - 1) + *(solution.end() - 2);
+		tmp = *(solution.end() - 2) + *(solution.end() - 1);
 	}
 	else if (operation == "-")
 	{
-		tmp = *(solution.end() - 1) - *(solution.end() - 2);
+		tmp = *(solution.end() - 2) - *(solution.end() - 1);
 	}
 
 	for (int i = 0; i < *numOfArgs; ++i)

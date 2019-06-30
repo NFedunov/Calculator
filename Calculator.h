@@ -20,7 +20,7 @@ class Calculator
 		{"+", { 0, 2}},
 		{"-", { 0, 2}},
 		{"(", {-1, 0}},
-		{")", {-1, 0}}
+		{")", {-2, 0}}
 	};
 	
 	string rawString;
@@ -34,7 +34,7 @@ class Calculator
 	//return next element of raw string
 	string getNextElement(unsigned int& pointer);
 	// priority of operation1 less than operation2?
-	bool lessPriority(string operation1, string operation2);
+	bool higherPriority(string operation1, string operation2);
 	//check if elem is number
 	bool isNumber(string elem);
 	elemType getElemType(const char &ch);
